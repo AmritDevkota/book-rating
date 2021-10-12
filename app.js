@@ -1,6 +1,13 @@
 const express = require('express');
 
 const path = require('path');
+const bodyParser = require('body-parser');
+
+const session = require('express-session');
+
+const mongoose = require('mongoose');
+
+const MONGOOB_URI = 'mongodb://localhost/book-rating';
 
 const app = express();
 
@@ -12,8 +19,29 @@ const userRoutes = require('./routes/user');
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+    secret: '12345',
+    resave: false,
+    saveUninitialized: false
+}))
+
 app.use(bookRoutes);
 app.use(userRoutes);
 
-app.listen(port);
-console.log("Server started at :", port);
+// app.use(errorController.get404);
+
+
+
+mongoose
+    .connect(MONGOOB_URI)
+    .then(result => {
+        console.log('Database connected');
+        app.listen(port);
+        console.log("Server started at :", port);
+    })
+    .catch(error => {
+        console.log(error);
+    })
