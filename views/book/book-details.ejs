@@ -16,7 +16,7 @@
     <div>
         <h4>Rating: <%= book.rating %> </h4>
     </div>
-    <form action="/book-details" method="POST">
+    <form action="/book-details/<%= book._id %>/review" method="POST">
         <h2>Review: </h2>
         <textarea name="review" id="review" cols="30" rows="10"></textarea><br>
         Your Rating: <select name="userRating" id="rating">
@@ -29,6 +29,16 @@
         <br>
         <button type="submit">Submit</button>
     </form>
+    <hr>
+    <% for (let review of reviews) { %> 
+        <article>
+            <header>
+                <b><%= review.user.name %></b>
+                <h1><%= review.review %></h1>
+                <h2><%= review.rating %></h2>
+            </header>            
+        </article>
+    <% } %>
 </main>
 
 <%- include('../includes/footer.ejs') %>

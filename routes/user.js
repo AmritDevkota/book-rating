@@ -17,8 +17,4 @@ router.post('/login', userController.postLogin);
 
 router.get('/me',isAuth, userController.getMe);
 
-router.get('/add-book', isAdmin, userController.getAddBook);
-
-router.post('/add-book', isAdmin, userController.postAddBook);
-
 module.exports = router;

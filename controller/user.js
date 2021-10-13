@@ -93,39 +93,3 @@ exports.getMe = (req, res, next) => {
         user: user
     })
 }
-
-exports.getAddBook = (req, res, next) => {
-    // console.log(req.user, 'req.user from getAddBook');
-    const user = req.user;
-
-    if (!req.user.isAdmin) {
-        return res.send('You are not authorized to add book.')
-    }
-    res.render('user/add-book', {
-        pageTitle: 'Add Book',
-        user : user
-    });
-};
-
-exports.postAddBook = (req, res, next) => {
-    const bookName = req.body.bookName;
-    const publishYear = req.body.publishYear;
-    const author = req.body.author;
-    const rating = req.body.rating;
-
-    const book = new Book ({
-        bookName: bookName,
-        publishYear: publishYear,
-        author: author,
-        rating: rating
-    });
-    book
-        .save()
-        .then(result => {
-            console.log('Successful! saving book in database!');
-            res.redirect('/');
-        })
-        .catch(error => {
-            console.log('Failed to save book in database', error)
-        })
-}
