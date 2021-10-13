@@ -16,20 +16,51 @@
     <div>
         <h4>Rating: <%= book.rating %> </h4>
     </div>
-    <form action="/book-details/<%= book._id %>/review" method="POST">
-        <h2>Review: </h2>
-        <textarea name="review" id="review" cols="30" rows="10"></textarea><br>
-        Your Rating: <select name="userRating" id="rating">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+    <% if (user) { %>
+        <form action="/book-details/<%= book._id %>/review" method="POST">
+            <h2>Review: </h2>
+            <textarea name="review" id="review" cols="30" rows="10"><% if (myReview) { %><%= myReview.review %><% } %></textarea><br>
+            Your Rating: <select value="5" name="userRating" id="rating">
+                <% for (let i = 1; i < 6; i++) { %>
+                    <option value="<%= i %>" 
+                        
+                        <% if (myReview && myReview.rating == i) { %>
+                            selected
+                        <% } %>
+                        
+                        ><%= i %></option>
+                <% } %>
+                <!-- <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option> -->
+            </select>
+            <br>
+
+            <button type="submit">
+                <% if (myReview) { %>
+                    Update Review
+                <% } else { %>
+                    Review
+                <% } %>
+            </button>
+        </form>
+    <% } else { %>
+        <h3>Please Login to review</h3>
+    <% } %>
     <hr>
+    <% if (myReview) { %>
+        <article>
+            <header>
+                <h1>Your Review</h1>
+                <b><%= myReview.user.name %></b>
+                <h1><%= myReview.review %></h1>
+                <h2><%= myReview.rating %></h2>
+            </header>            
+        </article>
+        <hr>
+    <% } %>
     <% for (let review of reviews) { %> 
         <article>
             <header>

@@ -15,6 +15,7 @@ const port = process.env.PORT || 3000;
 
 const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user');
+const errorController = require('./controller/error-controller');
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -33,10 +34,7 @@ app.use((req, res, next) => {
 })
 app.use(bookRoutes);
 app.use(userRoutes);
-
-// app.use(errorController.get404);
-
-
+app.use(errorController.get404);
 
 mongoose
     .connect(MONGOOB_URI)

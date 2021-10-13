@@ -54,8 +54,10 @@ exports.postAddBook = (req, res, next) => {
 }
 
 exports.getBookDetails = (req, res, next) => {
+
     const bookId = req.params.bookId;
     const user = req.user;
+    
     Book.findById(bookId)
         .then(book => {
             Review.find({
@@ -63,13 +65,34 @@ exports.getBookDetails = (req, res, next) => {
             })
             .populate('user')
             .then(reviews => {
-                // console.log(reviews)
-                return res.render('book/book-details', {
-                    book: book,
-                    pageTitle: book.bookName,
-                    reviews: reviews,
-                    user: user
-                })
+                if (user) {
+                    Review.findOne({
+                        book: bookId,
+                        user: user._id
+                    })
+                    .populate('user')
+                    .then(myReview => {
+                        // console.log(reviews)
+                        return res.render('book/book-details', {
+                            book: book,
+                            pageTitle: book.bookName,
+                            reviews: reviews,
+                            user: user,
+                            myReview: myReview
+                        })    
+                    })
+                } else {
+                    return res.render('book/book-details', {
+                        book: book,
+                        pageTitle: book.bookName,
+                        reviews: reviews,
+                        user: null,
+                        myReview: null
+                    })
+                }
+            })
+            .catch(error => {
+                console.log(error);
             })
         })
         .catch(error => {
@@ -84,18 +107,28 @@ exports.postBookReview = (req, res, next) => {
     const userReview = req.body.review;
     const userRating = req.body.userRating;
 
-    const review = new Review ({
-        review: userReview,
-        rating: userRating,
-        user:  userId,
+    Review.findOne({
+        user: user._id,
         book: bookId
-    });
-    review  
-        .save()
-        .then(review => {
-            res.redirect('/book-details/'+bookId)
-        })
-        .catch(error => {
-            console.log(error);
-        })
+    }).then (review => {
+        if (review) {
+            review.rating = userRating
+            review.review = userReview
+            return review.save();
+        } else {
+            review = new Review ({
+                review: userReview,
+                rating: userRating,
+                user:  userId,
+                book: bookId
+            });
+            return review.save();  
+        }
+    })
+    .then(review => {
+        res.redirect('/book-details/'+bookId)
+    })
+    .catch(error => {
+        console.log(error);
+    })
 }
