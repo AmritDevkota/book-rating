@@ -1,16 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<%- include('../includes/head.ejs', {pageTitle: pageTitle }) %>
+
+<%- include('../includes/head2.ejs') %>
+
+<%- include('../includes/navigation.ejs', { user: user }) %>
+
     <main>
         <div>
             UOP: University of People
+            <% for (let book of books) { %> 
+                <article>
+                    <header>
+                        <h1><%= book.bookName %></h1>
+                    </header>
+                    <div>
+                        <h3>Published Year: <%= book.publishYear %></h2>
+                    </div>
+                    <div>
+                        <h1>Author: <%= book.author %> </h1>
+                    </div>
+                    <div>
+                        <h4>Rating: <%= book.rating %> </h4>
+                    </div>
+                    <div>
+                        <button>
+                            <a href="/book-details/<%= book._id %>">Detail</a>
+                        </button>
+                    </div>
+                </article>
+            <% } %>
         </div>
     </main>
-</body>
-</html>
+
+<%- include('../includes/footer.ejs') %>
+
+<%- include('../includes/end.ejs') %>

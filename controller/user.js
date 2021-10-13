@@ -1,11 +1,16 @@
+const mongoose = require('mongoose');
+
 const bcrypt = require('bcryptjs');
 
-const user = require('../model/user');
-
 const User = require('../model/user');
+const Book = require('../model/book');
 
 exports.getSignUp = (req, res, next) => {
-    res.render('user/sign-up');
+    const user = req.user;
+    res.render('user/sign-up', {
+        pageTitle: 'Sign Up!',
+        user: user
+    });
 }
 
 exports.postSignUp = (req, res, next) => {
@@ -30,14 +35,18 @@ exports.postSignUp = (req, res, next) => {
             res.redirect('/');
         })
         .catch (error => {
-            console.log('Something goes Wring', error);
+            console.log('Something goes Wrong', error);
         })
 
 
 }
 
 exports.getLogin = (req, res, next) => {
-    res.render('user/login');
+    const user = req.user;
+    res.render('user/login', {
+        pageTitle: 'Login!',
+        user: user
+    });
 }
 
 exports.postLogin = (req, res, next) => {
@@ -78,8 +87,45 @@ exports.postLogin = (req, res, next) => {
 exports.getMe = (req, res, next) => {
     const user = req.user;
 
-    console.log('User logged In');
+    console.log('User logged In', 'From Me', user);
     res.render('user/me', {
+        pageTitle: 'My Profile',
         user: user
     })
+}
+
+exports.getAddBook = (req, res, next) => {
+    // console.log(req.user, 'req.user from getAddBook');
+    const user = req.user;
+
+    if (!req.user.isAdmin) {
+        return res.send('You are not authorized to add book.')
+    }
+    res.render('user/add-book', {
+        pageTitle: 'Add Book',
+        user : user
+    });
+};
+
+exports.postAddBook = (req, res, next) => {
+    const bookName = req.body.bookName;
+    const publishYear = req.body.publishYear;
+    const author = req.body.author;
+    const rating = req.body.rating;
+
+    const book = new Book ({
+        bookName: bookName,
+        publishYear: publishYear,
+        author: author,
+        rating: rating
+    });
+    book
+        .save()
+        .then(result => {
+            console.log('Successful! saving book in database!');
+            res.redirect('/');
+        })
+        .catch(error => {
+            console.log('Failed to save book in database', error)
+        })
 }

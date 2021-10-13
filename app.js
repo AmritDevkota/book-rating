@@ -27,7 +27,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
-
+app.use((req, res, next) => {
+    req.user = req.session.user;
+    next();
+})
 app.use(bookRoutes);
 app.use(userRoutes);
 

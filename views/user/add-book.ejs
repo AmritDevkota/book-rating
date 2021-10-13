@@ -1,0 +1,25 @@
+<%- include('../includes/head.ejs') %>
+    <title>Add Book</title>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs', { user: user }) %>
+    <h1>Add Book</h1>
+    <main>
+        <div>
+            <form action="" method="POST"> 
+                Name: <input type="text" name="bookName" id="bookName"> <br>
+                Publish Year: <input type="number" name="publishYear" id="publisYear"><br>
+                Author: <input type="text" name="author" id="author"><br>
+                Book-Rating: <select name="rating" id="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button type="submit">Add Book</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

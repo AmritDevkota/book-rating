@@ -1,1 +1,8 @@
-It me <%= user.name %>.
+<%- include('../includes/head.ejs') %>
+    <title>Document</title>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs', { user: user }) %>
+    It me <%= user.name %>.
+</body>
+</html>
