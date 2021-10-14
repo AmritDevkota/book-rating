@@ -1,19 +1,72 @@
 const Book = require('../model/book');
 const User = require('../model/user');
 const Review = require('../model/review');
-const review = require('../model/review');
+const Author = require('../model/author');
+const book = require('../model/book');
 
 exports.getIndex = (req, res, next) => {
     const user = req.user;
 
     Book.find()
+        .populate('author')
         .then(books => {
-            res.render('book/index', {
-                pageTitle: 'Home - Book Rating',
-                books: books,
-                // bookName: bookName,
-                user: user
+            books.forEach(book => {
+                const authorId = book.author._id;
+                Author.findOne({
+                    _id: authorId
+                })
+                .then(authors => {
+                    res.render('book/index', {
+                        pageTitle: 'Home - Book Rating',
+                        books: books,
+                        authors: authors,
+                        // bookName: bookName,
+                        user: user
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                })
             });
+        })
+        .catch (error => {
+            console.log(error);
+        })
+}
+
+exports.getAddAuthor = (req, res, next) => {
+    const user = req.user;
+    if(!req.user.isAdmin){
+        return res.send('You are not authoriazed to add author.')
+    }
+    Author.find()
+        .then(authors => {
+            console.log('Value of Authors in getAddAuthor is ', authors, 'and .authorname is : ');
+            res.render('book/add-author', {
+                pageTitle: 'Add Book',
+                user : user,
+                authors : authors
+            })
+        })
+}
+
+exports.postAddAuthor = (req, res, next) => {
+    const authorName = req.body.authorName;
+
+    const author = new Author ({
+        authorName: authorName,
+    })
+    author
+        .save()
+        .then(result => {
+            console.log(result);
+            console.log('Successfully new author added in database.')
+            res.redirect('/add-author');
+            // res.send({Yeah: 'Successfully new author added in database.'})
+        })
+        .catch(error => {
+            console.log('Failed to add new author in database', error)
+            // res.send({Sorry: 'Failed to add new author in database'})
         })
 }
 
@@ -21,25 +74,30 @@ exports.getAddBook = (req, res, next) => {
     // console.log(req.user, 'req.user from getAddBook');
     const user = req.user;
 
+
     if (!req.user.isAdmin) {
         return res.send('You are not authorized to add book.')
     }
-    res.render('user/add-book', {
-        pageTitle: 'Add Book',
-        user : user
-    });
+    Author.find()
+        .then(authors => {
+            res.render('book/add-book', {
+                pageTitle: 'Add Book',
+                user : user,
+                authors : authors
+            });
+        })
 };
 
 exports.postAddBook = (req, res, next) => {
     const bookName = req.body.bookName;
     const publishYear = req.body.publishYear;
-    const author = req.body.author;
+    const authorName = req.body.author;
     const rating = req.body.rating;
 
     const book = new Book ({
         bookName: bookName,
         publishYear: publishYear,
-        author: author,
+        author: authorName,
         rating: rating
     });
     book
@@ -47,10 +105,26 @@ exports.postAddBook = (req, res, next) => {
         .then(result => {
             console.log('Successful! saving book in database!');
             res.redirect('/');
+            // next();
         })
         .catch(error => {
             console.log('Failed to save book in database', error)
         })
+
+        // const author = new Author ({
+        //     authorName: authorName,
+        //     bookId: book._id
+        // })
+        // author
+        //     .save()
+        //     .then(author => {
+        //         console.log('Author data created? author value from post add book', author);
+        //         // next();
+        //         res.redirect('/');
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //     })
 }
 
 exports.getBookDetails = (req, res, next) => {
@@ -60,39 +134,46 @@ exports.getBookDetails = (req, res, next) => {
     
     Book.findById(bookId)
         .then(book => {
-            Review.find({
-                book: bookId
+            Author.findOne({
+                _id : book.author
             })
-            .populate('user')
-            .then(reviews => {
-                if (user) {
-                    Review.findOne({
-                        book: bookId,
-                        user: user._id
-                    })
-                    .populate('user')
-                    .then(myReview => {
-                        // console.log(reviews)
+            .then(author => {
+                Review.find({
+                    book: bookId
+                })
+                .populate('user')
+                .then(reviews => {
+                    if (user) {
+                        Review.findOne({
+                            book: bookId,
+                            user: user._id
+                        })
+                        .populate('user')
+                        .then(myReview => {
+                            // console.log(reviews)
+                            return res.render('book/book-details', {
+                                book: book,
+                                pageTitle: book.bookName,
+                                reviews: reviews,
+                                user: user,
+                                author: author,
+                                myReview: myReview
+                            })    
+                        })
+                    } else {
                         return res.render('book/book-details', {
                             book: book,
                             pageTitle: book.bookName,
                             reviews: reviews,
-                            user: user,
-                            myReview: myReview
-                        })    
-                    })
-                } else {
-                    return res.render('book/book-details', {
-                        book: book,
-                        pageTitle: book.bookName,
-                        reviews: reviews,
-                        user: null,
-                        myReview: null
-                    })
-                }
-            })
-            .catch(error => {
-                console.log(error);
+                            user: null,
+                            author: author,
+                            myReview: null
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
             })
         })
         .catch(error => {
