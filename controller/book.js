@@ -2,19 +2,78 @@ const Book = require('../model/book');
 const User = require('../model/user');
 const Review = require('../model/review');
 const Author = require('../model/author');
-const book = require('../model/book');
 
 exports.getIndex = (req, res, next) => {
     const user = req.user;
-
+    
     Book.find()
-        .populate('author')
-        .then(books => {
-            res.render('book/index', {
-                pageTitle: 'Home - Book Rating',
-                books: books,
-                user: user
-            });
+    .populate('author')
+    .lean()
+    .then(books => {
+        
+        // console.log('Here books is', books)
+        // sum of rating
+        // no. of people rating
+
+        let promises = [];
+        
+        for (let book of books) {
+                let sumRating = 0;
+                let ratingCount = 0;
+                let averageRating = 0;
+
+                console.log(book._id)
+
+                let aPromise = Review.find({
+                    book: book._id
+                })
+                .then(reviews => {
+                    ratingCount = reviews.length;
+                    for (review of reviews) {
+                        let bookRating = review.rating;
+                        sumRating += bookRating;
+                    }
+                    averageRating = sumRating/ratingCount;
+                    averageRating = averageRating.toFixed(2);
+                    console.log('Average Rating is ', averageRating);
+
+                    return averageRating;
+                })
+                promises.push(aPromise);
+            }
+
+            Promise.all(promises)
+                .then(ratings => {
+                    console.log('Ratings value', ratings);
+                    console.log('Response Sent!')
+
+                    let updatedBooks = [];
+                    for (let i = 0; i < ratings.length; i++) {
+                        updatedBooks.push({
+                            ...books[i],
+                            rating: ratings[i]
+                        })
+                    }
+
+                    console.log('Updated Books', updatedBooks);
+
+                    res.render('book/index', {
+                        pageTitle: 'Home - Book Rating',
+                        books: updatedBooks,
+                        user: user
+                    });
+
+                })
+
+            // Review.find({
+            // }).then(reviews => {
+            //     console.log('Here reviews is', reviews)
+            //     for (review of reviews) {
+            //         console.log('Review', review, 'and Reviews', reviews)
+            //         let bookRating = review.rating;
+            //         sumRating += bookRating;
+            //     }
+            // })
         })
         .catch (error => {
             console.log(error);
@@ -170,6 +229,11 @@ exports.getBookDetails = (req, res, next) => {
     
     Book.findById(bookId)
         .then(book => {
+
+            let sumRating = 0;
+            let ratingCount = 0;
+            let averageRating = 0;
+
             Author.findOne({
                 _id : book.author
             })
@@ -179,6 +243,18 @@ exports.getBookDetails = (req, res, next) => {
                 })
                 .populate('user')
                 .then(reviews => {
+
+                    ratingCount = reviews.length;
+                    for (review of reviews) {
+                        let bookRating = review.rating;
+                        sumRating += bookRating;
+                    }
+                    averageRating = (sumRating/ratingCount).toFixed(2);
+                    // averageRating = averageRating.toFixed(2);
+                    // console.log('Average Rating is ', averageRating);
+
+                    book.rating = averageRating;
+
                     if (user) {
                         Review.findOne({
                             book: bookId,

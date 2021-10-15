@@ -1,8 +1,9 @@
-<%- include('../includes/head.ejs') %>
-    <title>Document</title>
-</head>
-<body>
-    <%- include('../includes/navigation.ejs', { user: user }) %> <br><br>
+<%- include('../includes/head.ejs', {pageTitle: pageTitle }) %>
+
+<%- include('../includes/head2.ejs') %>
+
+<%- include('../includes/navigation.ejs', { user: user }) %>
+    <br><br>
     It me <%= user.name %>.
 
     <h1>My Reviews</h1>
@@ -18,5 +19,7 @@
             </header>            
         </article>
     <% } %>
-</body>
-</html>
+
+<%- include('../includes/footer.ejs') %>
+
+<%- include('../includes/end.ejs') %>
