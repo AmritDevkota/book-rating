@@ -7,12 +7,15 @@
 <h1>
         <%= author.authorName %>
 </h1>
+<img src="/<%= author.image %>" alt="<%= author.authorName %>">
 <hr>
 
 <% for (let book of books) { %>
     <article>
         <header>
-            <h1><%= book.bookName %></h1>
+            <h1>
+            <a href="/book-details/<%= book._id %>"><%= book.bookName %></a>
+        </h1>
         </header>
         <div>
             <h3>Published Year: <%= book.publishYear %></h2>

@@ -15,8 +15,8 @@ exports.getSignUp = (req, res, next) => {
 }
 
 exports.postSignUp = (req, res, next) => {
-    console.log('Signup Complete')
-    console.log(req.body);
+    // console.log('Signup Complete')
+    // console.log(req.body);
 
     const name = req.body.name;
     const email = req.body.email;
@@ -51,8 +51,8 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-    console.log('Login Complete')
-    console.log(req.body);
+    // console.log('Login Complete')
+    // console.log(req.body);
 
     const email = req.body.email;
     const password = req.body.password;
@@ -69,7 +69,7 @@ exports.postLogin = (req, res, next) => {
             .compare(password, user.password)
             .then(doMatch => {
                 if (doMatch) {
-                    console.log('doMatch', doMatch);
+                    // console.log('doMatch', doMatch);
                     req.session.user = user
                     return res.redirect('/')
                 }
@@ -95,7 +95,7 @@ exports.getMe = (req, res, next) => {
     })
     .populate('book')
     .then(reviews => {
-        console.log('User logged In', 'From Me', user);
+        // console.log('User logged In', 'From Me', user);
         res.render('user/me', {
             pageTitle: 'My Profile',
             reviews: reviews,

@@ -5,6 +5,9 @@ const authorSchema = new Schema ({
     authorName: {
         type: String,
         required: true
+    },
+    image:{
+        type: String
     }
 })
 

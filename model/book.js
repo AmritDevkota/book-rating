@@ -6,6 +6,10 @@ const bookSchema = new Schema ({
         type: String,
         required: true
     },
+    bookImage: {
+        type: String,
+        required: true
+    },
     publishYear: {
         type: Number,
         required: true

@@ -6,8 +6,9 @@
     <h1>Add Book</h1>
     <main>
         <div>
-            <form action="" method="POST"> 
+            <form action="" method="POST" enctype="multipart/form-data"> 
                 Name: <input type="text" name="bookName" id="bookName"> <br><br>
+                Image: <input type="file" name="image" id="image"><br><br>
                 Publish Year: <input type="number" name="publishYear" id="publisYear"><br><br>
                 Author: <select name="author" id="author">
                     <% for (let author of authors) { %> 

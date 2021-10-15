@@ -6,7 +6,7 @@
     <main>
         <div>
             <h3>First Check Author Name in author list </h3>
-            <form action="/add-author" method="POST"> 
+            <form action="/add-author" method="POST" enctype="multipart/form-data"> 
 
                 Author-list: <select name="author" id="author">
                     <% for (let author of authors) { %> 
@@ -18,6 +18,8 @@
                 <button><a href="/add-book">Add Book</a></button><br><br>
                 <h3>In case author's name not found in the list. Add Name Below: </h3>
                 Name: <input type="text" name="authorName" id="authorName"> <br><br>
+                Image: <input type="file" name="image" id="image"><br><br>
+
 
                 <!-- Book-Rating: <select name="rating" id="rating">
                     <option value="1">1</option>

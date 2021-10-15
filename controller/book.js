@@ -23,7 +23,7 @@ exports.getIndex = (req, res, next) => {
 
 exports.getAuthors = (req, res, next) => {
     const user = req.user;
-    console.log('User value: ', user);
+    // console.log('User value: ', user);
     Author.find()
         .then(authors => {  
             res.render('book/authors',{
@@ -37,7 +37,7 @@ exports.getAuthors = (req, res, next) => {
 exports.getAuthorDetail = (req, res, next) => {
     const user = req.user;
     const authorId = req.params.authorId;
-    console.log('User value: ', user);
+    // console.log('User value: ', user);
     Author.findOne({
         _id: authorId
     })
@@ -48,8 +48,8 @@ exports.getAuthorDetail = (req, res, next) => {
             })
             .populate('author')
             .then(books => { 
-                console.log('Author value', author)
-                console.log('Books value', books)
+                // console.log('Author value', author)
+                // console.log('Books value', books)
                 res.render('book/author-detail',{
                     pageTitle: 'Author Detail',
                     user: user,
@@ -67,7 +67,7 @@ exports.getAddAuthor = (req, res, next) => {
     }
     Author.find()
         .then(authors => {
-            console.log('Value of Authors in getAddAuthor is ', authors, 'and .authorname is : ');
+            // console.log('Value of Authors in getAddAuthor is ', authors, 'and .authorname is : ');
             res.render('book/add-author', {
                 pageTitle: 'Add Book',
                 user : user,
@@ -78,15 +78,20 @@ exports.getAddAuthor = (req, res, next) => {
 
 exports.postAddAuthor = (req, res, next) => {
     const authorName = req.body.authorName;
+    let image = req.file;
+    if(image){
+        image = image.path;
+    }
 
     const author = new Author ({
         authorName: authorName,
+        image: image
     })
     author
         .save()
         .then(result => {
-            console.log(result);
-            console.log('Successfully new author added in database.')
+            // console.log(result);
+            // console.log('Successfully new author added in database.')
             res.redirect('/add-author');
             // res.send({Yeah: 'Successfully new author added in database.'})
         })
@@ -99,6 +104,7 @@ exports.postAddAuthor = (req, res, next) => {
 exports.getAddBook = (req, res, next) => {
     // console.log(req.user, 'req.user from getAddBook');
     const user = req.user;
+    const image = req.file;
 
 
     if (!req.user.isAdmin) {
@@ -116,12 +122,16 @@ exports.getAddBook = (req, res, next) => {
 
 exports.postAddBook = (req, res, next) => {
     const bookName = req.body.bookName;
+    const image = req.file;
     const publishYear = req.body.publishYear;
     const authorName = req.body.author;
     const rating = req.body.rating;
 
+    const bookImage = image.path;
+
     const book = new Book ({
         bookName: bookName,
+        bookImage: bookImage,
         publishYear: publishYear,
         author: authorName,
         rating: rating
@@ -129,7 +139,7 @@ exports.postAddBook = (req, res, next) => {
     book
         .save()
         .then(result => {
-            console.log('Successful! saving book in database!');
+            // console.log('Successful! saving book in database!');
             res.redirect('/');
             // next();
         })
