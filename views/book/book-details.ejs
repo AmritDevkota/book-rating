@@ -11,7 +11,9 @@
         <h3>Published Year: <%= book.publishYear %></h2>
     </div>
     <div>
-        <h1>Author: <%= author.authorName %> </h1>
+        <h1>
+            Author: <a href="/author-detail/<%= author._id%>"><%= author.authorName %> </a> 
+        </h1>
     </div>
     <div>
         <h4>Rating: <%= book.rating %> </h4>
@@ -20,7 +22,8 @@
         <form action="/book-details/<%= book._id %>/review" method="POST">
             <h2>Review: </h2>
             <textarea name="review" id="review" cols="30" rows="10"><% if (myReview) { %><%= myReview.review %><% } %></textarea><br>
-            Your Rating: <select value="5" name="userRating" id="rating">
+            Your Rating: 
+            <select value="5" name="userRating" id="rating">
                 <% for (let i = 1; i < 6; i++) { %>
                     <option value="<%= i %>" 
                         
@@ -30,13 +33,8 @@
                         
                         ><%= i %></option>
                 <% } %>
-                <!-- <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5" selected>5</option> -->
             </select>
-            <br>
+            <br> <br>
 
             <button type="submit">
                 <% if (myReview) { %>

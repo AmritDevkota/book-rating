@@ -10,27 +10,53 @@ exports.getIndex = (req, res, next) => {
     Book.find()
         .populate('author')
         .then(books => {
-            books.forEach(book => {
-                const authorId = book.author._id;
-                Author.findOne({
-                    _id: authorId
-                })
-                .then(authors => {
-                    res.render('book/index', {
-                        pageTitle: 'Home - Book Rating',
-                        books: books,
-                        authors: authors,
-                        // bookName: bookName,
-                        user: user
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            res.render('book/index', {
+                pageTitle: 'Home - Book Rating',
+                books: books,
+                user: user
             });
         })
         .catch (error => {
             console.log(error);
+        })
+}
+
+exports.getAuthors = (req, res, next) => {
+    const user = req.user;
+    console.log('User value: ', user);
+    Author.find()
+        .then(authors => {  
+            res.render('book/authors',{
+                pageTitle: 'Authors',
+                user: user,
+                authors: authors
+            });
+        })
+}
+
+exports.getAuthorDetail = (req, res, next) => {
+    const user = req.user;
+    const authorId = req.params.authorId;
+    console.log('User value: ', user);
+    Author.findOne({
+        _id: authorId
+    })
+        .then(author => {
+            Book
+            .find({
+                author: authorId
+            })
+            .populate('author')
+            .then(books => { 
+                console.log('Author value', author)
+                console.log('Books value', books)
+                res.render('book/author-detail',{
+                    pageTitle: 'Author Detail',
+                    user: user,
+                    author: author,
+                    books: books
+                });  
+            })
         })
 }
 

@@ -1,0 +1,16 @@
+<%- include('../includes/head.ejs', {pageTitle: pageTitle }) %>
+
+<%- include('../includes/head2.ejs') %>
+
+<%- include('../includes/navigation.ejs', { user: user }) %>
+<hr>
+<h1>Authors of Books in our Library</h1>
+<hr>
+
+<% for (let author of authors) { %> 
+    <a href="/author-detail/<%= author._id %>"><%= author.authorName %></a><br><br>
+<% } %>
+
+<%- include('../includes/footer.ejs') %>
+
+<%- include('../includes/end.ejs') %>

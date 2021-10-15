@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../model/user');
 const Book = require('../model/book');
+const Review = require('../model/review');
 
 exports.getSignUp = (req, res, next) => {
     const user = req.user;
@@ -87,9 +88,19 @@ exports.postLogin = (req, res, next) => {
 exports.getMe = (req, res, next) => {
     const user = req.user;
 
-    console.log('User logged In', 'From Me', user);
-    res.render('user/me', {
-        pageTitle: 'My Profile',
+    // find in review that user : user
+    // populate book
+    Review.find({
         user: user
     })
+    .populate('book')
+    .then(reviews => {
+        console.log('User logged In', 'From Me', user);
+        res.render('user/me', {
+            pageTitle: 'My Profile',
+            reviews: reviews,
+            user: user
+        })
+    })
+
 }

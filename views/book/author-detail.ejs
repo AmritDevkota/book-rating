@@ -1,0 +1,29 @@
+<%- include('../includes/head.ejs', {pageTitle: pageTitle }) %>
+
+<%- include('../includes/head2.ejs') %>
+
+<%- include('../includes/navigation.ejs', { user: user }) %>
+<hr>
+<h1>
+        <%= author.authorName %>
+</h1>
+<hr>
+
+<% for (let book of books) { %>
+    <article>
+        <header>
+            <h1><%= book.bookName %></h1>
+        </header>
+        <div>
+            <h3>Published Year: <%= book.publishYear %></h2>
+        </div>
+        <div>
+            <h4>Rating: <%= book.rating %> </h4>
+        </div>
+    </article>
+    <hr>
+<% } %>
+
+<%- include('../includes/footer.ejs') %>
+
+<%- include('../includes/end.ejs') %>

@@ -10,6 +10,10 @@ const router = express.Router();
 
 router.get('/', bookController.getIndex);
 
+router.get('/authors', bookController.getAuthors);
+
+router.get('/author-detail/:authorId', bookController.getAuthorDetail)
+
 router.get('/add-author', isAdmin, bookController.getAddAuthor);
 
 router.post('/add-author', isAdmin, bookController.postAddAuthor);

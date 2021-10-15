@@ -2,7 +2,21 @@
     <title>Document</title>
 </head>
 <body>
-    <%- include('../includes/navigation.ejs', { user: user }) %>
+    <%- include('../includes/navigation.ejs', { user: user }) %> <br><br>
     It me <%= user.name %>.
+
+    <h1>My Reviews</h1>
+    <hr>
+    
+    <!-- For each review in Reviews -->
+    <% for (let review of reviews) { %> 
+        <article>
+            <header>
+                <b><%= review.book.bookName %></b>
+                <h1><%= review.review %></h1>
+                <h2><%= review.rating %></h2>
+            </header>            
+        </article>
+    <% } %>
 </body>
 </html>
